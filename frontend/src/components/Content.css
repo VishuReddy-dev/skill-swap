@@ -1,0 +1,73 @@
+.Content-wrapper {
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center; /* Center the cards */
+  }
+  .card {
+    margin: 10px;
+    width: 100%;
+    max-width: 300px; /* Ensures the cards don't exceed this width */
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+
+    .content {
+      padding: 20px 30px;
+    }
+  }
+
+  @keyframes shine {
+    to {
+      background-position-x: -200%;
+    }
+  }
+  .card.is-loading {
+    .image,
+    h2,
+    p {
+      background: #eee;
+      background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+      border-radius: 5px;
+      background-size: 200% 100%;
+      animation: 1.5s shine linear infinite;
+    }
+
+    .image {
+      height: 200px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    h2 {
+      height: 30px;
+    }
+
+    p {
+      height: 70px;
+    }
+  }
+
+  /* Ensure full responsiveness */
+  @media (max-width: 576px) {
+    .container {
+      flex-direction: column;
+      align-items: center; /* Center-align the cards on small screens */
+    }
+    .card {
+      width: 100%; /* Cards take full width */
+      max-width: 90%; /* Add some padding from the edges */
+    }
+  }
+
+  @media (min-width: 577px) and (max-width: 992px) {
+    .container {
+      justify-content: space-around; /* Add spacing between cards */
+    }
+    .card {
+      flex: 1 1 calc(50% - 20px); /* Two cards per row */
+      max-width: 45%; /* Prevent cards from becoming too wide */
+    }
+  }
+}
