@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function SkillCard(props: any) {
   const navigate = useNavigate();
   return (
-    <div className="card">
+    <div className="card" onClick={() => navigate(`/skills/${props.id}`)}>
       <img
         src={`http://localhost:5000/${props.image}`}
         alt="skill image"
@@ -17,9 +17,9 @@ export default function SkillCard(props: any) {
             ? `${props.description.slice(0, 30)}...`
             : props.description}
         </p>
-        <Link to={`/skills/${props.id}`} className="btn btn-primary">
+        {/* <Link to={`/skills/${props.id}`} className="btn btn-primary">
           Know More
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

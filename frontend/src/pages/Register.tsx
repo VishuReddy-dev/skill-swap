@@ -69,7 +69,7 @@ export default function Register() {
         />
       </div>
       <p onClick={handleLogin}>Login</p>
-      <button className="btn btn-primary mt-3" type="submit">
+      <button className="btn btn-info mt-3" type="submit">
         Register
       </button>
     </form>

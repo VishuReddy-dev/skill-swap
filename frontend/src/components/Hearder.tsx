@@ -1,8 +1,7 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./Header.css";
-import profile from "../assets/profile-user.png";
+import profile from "../assets/user.png";
 
 // Define the payload structure based on your JWT
 interface MyJwtPayload {
@@ -80,16 +79,21 @@ export default function Header() {
     //     )}
     //   </nav>
     // </header>
-    <header className="bg-dark text-white">
-      <nav className="navbar container d-flex justify-content-between align-items-center py-3">
+    <header className="header">
+      <nav
+        className="navbar navbar-inverse navbar-fixed-top p-2 container"
+        role="navigation"
+      >
         {/* Logo */}
         <h1
-          className="logo fw-bold text-light mb-0"
+          className="logo fw-bold text-light mb-0 logo"
           onClick={() => navigate("/")}
           role="button"
           style={{ cursor: "pointer" }}
         >
-          SkillSwap
+          <a href="#" id="style-2" data-replace="SkillSwap" className="link">
+            <span>SkillSwap</span>
+          </a>
         </h1>
 
         {/* Navigation Links */}
@@ -115,10 +119,7 @@ export default function Header() {
               }}
             />
             {/* Logout Button */}
-            <button
-              className="btn btn-outline-light btn-sm"
-              onClick={handleLogout}
-            >
+            <button className="btn btn-info btn-sm" onClick={handleLogout}>
               Logout
             </button>
           </div>
@@ -126,7 +127,7 @@ export default function Header() {
           <ul className="nav mb-0">
             <li className="nav-item me-3">
               <button
-                className="btn btn-primary btn-sm"
+                className="btn btn-info btn-sm"
                 onClick={() => navigate("/login")}
               >
                 Login
@@ -134,7 +135,7 @@ export default function Header() {
             </li>
             <li className="nav-item">
               <button
-                className="btn btn-outline-light btn-sm"
+                className="btn btn-light btn-sm"
                 onClick={() => navigate("/register")}
               >
                 Register

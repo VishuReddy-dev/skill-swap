@@ -67,7 +67,7 @@ export default function Login() {
       <p onClick={handleRegister} className="mt-1">
         Register
       </p>
-      <button type="submit" className="btn btn-primary mt-1">
+      <button type="submit" className="btn btn-info mt-1">
         Login
       </button>
     </form>

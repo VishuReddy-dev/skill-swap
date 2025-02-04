@@ -1,41 +1,40 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // Import jwt-decode
+import { jwtDecode } from "jwt-decode";
 
 interface Skill {
   title: string;
   description: string;
   image: string;
-  createdBy: string; // The user who created the skill (the toUser)
-  _id: string; // Skill ID
+  createdBy: string;
+  _id: string;
 }
 
 export default function SkillDetailPage() {
-  const { id } = useParams<{ id: string }>(); // Get the skill ID from the URL
+  const { id } = useParams<{ id: string }>();
   const [skill, setSkill] = useState<Skill | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null); // To store the current user ID
-  const [requestedSkillId, setRequestedSkillId] = useState<string | null>(null); // For the skill the user wants to request
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [requestedSkillId, setRequestedSkillId] = useState<string | null>(null);
+  const [userSkills, setUserSkills] = useState<Skill[]>([]);
 
-  // Fetch current user ID from the token in localStorage
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Get the JWT token from localStorage
+    const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decodedToken: any = jwtDecode(token); // Decode the JWT token
-        setCurrentUserId(decodedToken.id); // Extract userId from the decoded token
+        const decodedToken: any = jwtDecode(token);
+        setCurrentUserId(decodedToken.id);
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     }
   }, []);
-  console.log(currentUserId);
 
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:5000/api/skills/${id}`) // Fetch the skill based on ID
+        .get(`http://localhost:5000/api/skills/${id}`)
         .then((response) => {
           setSkill(response.data);
           setLoading(false);
@@ -46,9 +45,20 @@ export default function SkillDetailPage() {
         });
     }
   }, [id]);
-  console.log(skill);
 
-  // Handle the swap request
+  useEffect(() => {
+    if (currentUserId) {
+      axios
+        .get(`http://localhost:5000/api/skills/user/${currentUserId}`)
+        .then((response) => {
+          setUserSkills(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user skills:", error);
+        });
+    }
+  }, [currentUserId]);
+
   const handleSwap = () => {
     if (!currentUserId || !skill || !requestedSkillId) {
       return alert("User or skill data is missing.");
@@ -56,11 +66,13 @@ export default function SkillDetailPage() {
 
     const swapRequestData = {
       fromUserId: currentUserId,
-      toUserId: skill.createdBy, // The toUser is identified by the createdBy field of the skill
-      skillOfferedId: requestedSkillId, // The skill the user is offering (current skill)
-      skillRequestedId: skill._id, // The skill the user is requesting (this should be a different skill)
+      toUserId: skill.createdBy,
+      skillOfferedId: requestedSkillId,
+      skillRequestedId: skill._id,
     };
-
+    if (skill.createdBy === currentUserId) {
+      return alert("You cannot swap your own skill.");
+    }
     axios
       .post("http://localhost:5000/api/swaps/request", swapRequestData)
       .then((response) => {
@@ -83,7 +95,6 @@ export default function SkillDetailPage() {
   return (
     <div className="container skill-detail-page">
       <div className="row">
-        {/* Image Section */}
         <div className="col-md-6">
           <img
             src={`http://localhost:5000/${skill.image}`}
@@ -91,25 +102,28 @@ export default function SkillDetailPage() {
             className="img-fluid rounded mb-4"
           />
         </div>
-
-        {/* Skill Details Section */}
         <div className="col-md-6">
           <h1 className="display-4 mb-4">{skill.title}</h1>
           <p className="lead">{skill.description}</p>
-
-          {/* Dropdown or input to select the requested skill */}
+          <p className="lead">{skill._id}</p>
           <label htmlFor="requestedSkill">Select a skill to request:</label>
           <div className="form-group">
-            <input
-              type="text"
+            <select
               id="requestedSkill"
               value={requestedSkillId || ""}
-              onChange={(e) => setRequestedSkillId(e.target.value)} // This can be a dropdown of available skills
-              placeholder="Enter the ID of the skill you want"
+              onChange={(e) => setRequestedSkillId(e.target.value)}
               className="form-control"
-            />
+            >
+              <option value="" disabled>
+                Select a skill
+              </option>
+              {userSkills.map((userSkill) => (
+                <option key={userSkill._id} value={userSkill._id}>
+                  {userSkill.title}
+                </option>
+              ))}
+            </select>
           </div>
-
           <button className="btn btn-warning mt-3" onClick={handleSwap}>
             Swap
           </button>
